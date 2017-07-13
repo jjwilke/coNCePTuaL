@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+target=$1
+appname=${1//-/_}
+
+CONC=$HOME/Programs/install/conceptual/clang3.9
+CC=sstcc
+#CONC=$HOME/Programs/install/conceptual/mpi
+#CC=mpicc
+
+$CONC/bin/ncptl $1.ncptl --backend=c_mpi --no-compile > $1.c
+
+SSTMAC_SKELETONIZE=1 \
+ $CC -o run$1 \
+ -Dsstmac_app_name=$appname \
+ -L$CONC/lib -lncptl \
+ -I$CONC/include \
+ $1.c 
+

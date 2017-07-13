@@ -341,6 +341,7 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
                               comment="Version of random_seed with int type",
                               stack=bcastcode)
         self.pushmany([
+            "#pragma sst keep",
             "(void) MPI_Bcast ((void *)&rndseed_int, 1, MPI_INT, 0, MPI_COMM_WORLD);",
             "random_seed = (ncptl_int) rndseed_int;",
             "}"],
@@ -349,7 +350,10 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
 
     def code_def_init_uuid_BCAST(self, locals):
         "Broadcast logfile_uuid to all tasks."
-        return ["(void) MPI_Bcast ((void *)logfile_uuid, 37, MPI_CHAR, 0, MPI_COMM_WORLD);"]
+        return [
+          "#pragma sst keep",
+          "(void) MPI_Bcast ((void *)logfile_uuid, 37, MPI_CHAR, 0, MPI_COMM_WORLD);"
+        ]
 
     def code_def_mark_used_POST(self, locals):
         "Indicate that rank_in_MPI_communicator() is not an unused function."
@@ -451,6 +455,7 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
         elif tag == "EV_MCAST":
             self.pushmany([
                     "if (%s.mpi_func == CONC_MCAST_MPI_ALLTOALL || %s.mpi_func == CONC_MCAST_MPI_ALLTOALLV)" % (struct, struct),
+                    "#pragma sst init 0",
                     "%s.buffer2 = ncptl_malloc_message (%s.bufferofs2 + %s.size2," % \
                         (struct, struct, struct),
                     "%s.alignment," % struct,
@@ -460,6 +465,7 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
         elif tag == "EV_REDUCE":
             self.pushmany([
                 "if (!%s.altbuffer && %s.receiving)" % (struct, struct),
+                "#pragma sst init 0",
                 "%s.altbuffer = ncptl_malloc_message (%s.numitems * %s.itemsize + %s.bufferofs," % (struct, struct, struct, struct),
                 "%s.alignment," % struct,
                 "%s.buffernum+1,   /* Note that reduces use _two_ buffers. */" % struct,
@@ -1005,6 +1011,7 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
         self.pushmany([
                 "%s.bufferofs2 = %s;" % (struct, alt_message_spec[7]),
                 "%s.size2 = rcvnum * (%s);" % (struct, message_spec[2]),
+                "#pragma sst init 0",
                 "(void) ncptl_malloc_message (%s.size2 + %s.bufferofs2, %s.alignment, %s.buffernum+1, %s.misaligned);" % (struct, struct, struct, struct, struct),
                 "%s.buffer2 = NULL;" % struct,
                 "%s.communicator = subcomm;" % struct,
@@ -1268,6 +1275,7 @@ class NCPTL_CodeGen(codegen_c_generic.NCPTL_CodeGen):
             "}",
             "%s.sendcomm = sendcomm;" % struct,
             "%s.recvcomm = recvcomm;" % struct,
+            "#pragma sst init 0",
             "(void) ncptl_malloc_message (message_size + %s.bufferofs, %s.alignment, %s.buffernum+1, %s.misaligned);   /* altbuffer uses buffernum+1. */" %
             (struct, struct, struct, struct)],
                       stack=initcode)

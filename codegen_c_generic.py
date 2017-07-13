@@ -1211,6 +1211,7 @@ class NCPTL_CodeGen:
                               stack)
             else:
                 self.pushmany([
+                    "#pragma sst delete",
                     "(void) ncptl_malloc_message (%s.size+%s.bufferofs, %s.alignment, %s.buffernum, %s.misaligned);" %
                     (struct, struct, struct, struct, struct),
                     "%s.buffer = NULL;" % struct],
@@ -2967,6 +2968,7 @@ class NCPTL_CodeGen:
                 self.pushmany([
                     "case %s:" % tag,
                     "if (!%s.buffer)" % struct,
+                    "#pragma sst init 0",
                     "%s.buffer = ncptl_malloc_message (%s," % (struct, sizefield),
                     "%s.alignment," % struct,
                     "%s.buffernum," % struct,
