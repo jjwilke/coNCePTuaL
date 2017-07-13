@@ -2747,7 +2747,8 @@ class NCPTL_CodeGen:
             " /* Initialize the coNCePTuaL run-time library. */",
             "if (!help_only)",
             "ncptl_init (NCPTL_RUN_TIME_VERSION, argv[0]);",
-            "(void) atexit (conc_exit_handler);"])
+            #"(void) atexit (conc_exit_handler);"
+            ])
         self.pushmany(self.invoke_hook("code_def_init_init_POST", locals()))
 
     def code_def_init_seed(self, node):

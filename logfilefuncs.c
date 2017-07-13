@@ -216,6 +216,10 @@ typedef struct ncptl_log_file_state {
   int suppress_emptying;     /* 1=don't empty the log after committing data */
 } NCPTL_LOG_FILE_STATE;
 
+void printlog(const char* file, int line, NCPTL_LOG_FILE_STATE *logstate)
+{
+  printf("%s:%d->%p : %p\n", file, line, logstate->logfiledata, logstate);
+}
 
 /************************************
  * Imported variables and functions *

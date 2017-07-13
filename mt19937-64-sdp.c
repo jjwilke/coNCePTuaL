@@ -126,7 +126,7 @@ uint64_t ncptl_genrand_int64 (MT_STATE *statevar)
 {
   int i;
   uint64_t x;
-  static uint64_t mag01[2] = {UINT64_C(0), MATRIX_A};
+  static const uint64_t mag01[2] = {UINT64_C(0), MATRIX_A};
 
   if (statevar->mti >= NN) { /* generate NN words at one time */
 

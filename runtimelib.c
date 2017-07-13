@@ -128,6 +128,7 @@ extern char *strsignal (int);
 
 /* Dummy variable to prevent whiny C compilers from complaining about
  * unused function parameters. */
+#pragma sst keep
 static volatile int dummyvar;
 
 
@@ -423,10 +424,9 @@ int ncptl_envvar_to_uint64 (const char *envvar, uint64_t *value)
 /* Wrap a non-inlined ncptl_time_no_hpet() function around the inlined
  * version to ensure that ncptl_time_no_hpet() can be called
  * externally. */
+static uint64_t inlined_time_no_hpet (void);
 uint64_t ncptl_time_no_hpet (void)
 {
-  extern inline uint64_t inlined_time_no_hpet (void);
-
   return inlined_time_no_hpet();
 }
 
@@ -793,8 +793,10 @@ static void calculate_mean_time_delay (void)
       break;
     }
   }
-  if (cycle_counter_delay == -1)
+  if (cycle_counter_delay == -1){
+   #pragma sst init 0
     cycle_counter_delay = ncptl_time_overhead < 1;
+  }
   ncptl_free (timerdeltas);
 }
 
@@ -894,6 +896,7 @@ static void calibrate_spins_per_usec (void)
     while (1) {
       sleep (0);           /* Try to refresh our time quantum. */
       starttime = ncptl_time();
+    #pragma sst compute
       for (i=0; i<trialspins; i++)
         dummyvar = 0;
       stoptime = ncptl_time();
@@ -913,7 +916,7 @@ static void calibrate_spins_per_usec (void)
 /* Return the current time in microseconds without using HPET.
  * NOTE: This function must be kept up-to-date with
  * log_write_prologue_timer(). */
-inline uint64_t inlined_time_no_hpet (void)
+static uint64_t inlined_time_no_hpet (void)
 {
 #if NCPTL_TIMER_TYPE == 1
   /* Use gettimeofday() if we were forced to or if nothing else is
@@ -1736,7 +1739,7 @@ void ncptl_udelay (int64_t delay, int spin0block1)
         uint64_t numspins = usecs_remaining * spinsperusec / spinfactor;
         uint64_t now;
         uint64_t i;
-
+       #pragma sst compute
         for (i=0; i<numspins; i++)
           dummyvar = 0;
         now = ncptl_time() + ncptl_time_overhead;
