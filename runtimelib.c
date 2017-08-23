@@ -473,9 +473,11 @@ static void reinstate_all_signal_handlers (void)
 {
   int i;
 
+#ifndef DONT_TRAP_SIGNALS
   for (i=1; i<NUM_SIGNALS; i++)
     if (!ncptl_no_trap_signal[i])
       ncptl_install_signal_handler (i, original_handler[i], NULL, 0);
+#endif
 }
 
 
@@ -1638,6 +1640,7 @@ void ncptl_parse_command_line (int argc, char *argv[],
    * handler for each possible signal, except those the user doesn't
    * want us to trap.  We always trap SIGALRM, though, because we
    * actually use that internally. */
+#ifndef DONT_TRAP_SIGNALS
   parse_signal_list (signal_string);
   for (i=1; i<NUM_SIGNALS; i++) {
     /* Store the current value of each signal handler. */
@@ -1660,6 +1663,7 @@ void ncptl_parse_command_line (int argc, char *argv[],
           ncptl_install_signal_handler (i, abort_on_signal, &original_handler[i], 0);
     }
   }
+#endif
 
   /* Clean up some more. */
   ncptl_free (arglist);

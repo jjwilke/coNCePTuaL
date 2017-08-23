@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-glibtoolize --copy
+libtoolize --copy && glibtoolize --copy
 aclocal
 autoheader
 touch substitutions.dat.in
