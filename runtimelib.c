@@ -728,6 +728,7 @@ static int timer_increments_slowly (uint64_t numdeltas, uint64_t *timerdeltas)
   uint64_t i, j;
 
   /* Keep probing until we get numdeltas valid readings. */
+#pragma sst delete
   for (i=0; i<numdeltas; i++) {
     uint64_t starttime, stoptime=UINT64_C(0);        /* Clock readings */
 
@@ -742,6 +743,7 @@ static int timer_increments_slowly (uint64_t numdeltas, uint64_t *timerdeltas)
     meandelta += timerdeltas[i];
   }
   meandelta /= numdeltas;
+#pragma sst return 0
   return meandelta > UINT64_C(1000);
 }
 
@@ -749,8 +751,10 @@ static int timer_increments_slowly (uint64_t numdeltas, uint64_t *timerdeltas)
 /* Calculate the mean delay in calling ncptl_time(). */
 static void calculate_mean_time_delay (void)
 {
+#pragma sst init 0
   const uint64_t mintrialcalls = 100000;  /* Min. # of measurements to take */
   uint64_t trialcalls;                    /* # of calls to ncptl_time() in each trial */
+#pragma sst init 0
   const uint64_t mindatapoints = 1000;    /* Min. # of nonzero readings we require */
   uint64_t *timerdeltas;                  /* List of all non-zero deltas */
   uint64_t numdeltas = 0;                 /* # of entries in the above */

@@ -11,8 +11,9 @@ CC=sstcc
 $CONC/bin/ncptl $1.ncptl --backend=c_mpi --no-compile > $1.c
 
 SSTMAC_SKELETONIZE=1 \
- $CC -O0 -g -o run$1 \
+ $CC -O3 -o run$1 \
  -Dsstmac_app_name=$appname \
+ -Wno-unused-value \
  -L$CONC/lib -lncptl \
  -I$CONC/include \
  $1.c 
