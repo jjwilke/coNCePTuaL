@@ -2110,6 +2110,7 @@ static void log_write_prologue_creation (NCPTL_LOG_FILE_STATE *logstate)
    * user's user ID. */
   userid = getuid();
 #ifdef HAVE_GETPWUID
+#pragma sst init 0
   userinfo = getpwuid (userid);
   if (userinfo)
     if (userinfo->pw_gecos && *userinfo->pw_gecos)

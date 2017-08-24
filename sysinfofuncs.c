@@ -281,6 +281,7 @@ static void fill_in_sys_desc_hal (SYSTEM_INFORMATION *info)
 
 
 /* Fill in the name of the OS distribution if possible. */
+#pragma sst empty
 static void fill_in_osdist (SYSTEM_INFORMATION *info)
 {
   /* Run the lsb_release script to determine the OS distribution. */
@@ -895,6 +896,7 @@ static void fill_in_cpu_info_sysfs (SYSTEM_INFORMATION *info)
 
 
 /* Fill in all of the the CPU-related fields. */
+#pragma sst empty
 static void fill_in_cpu_info (SYSTEM_INFORMATION *info)
 {
 #ifdef CYCLES_PER_USEC

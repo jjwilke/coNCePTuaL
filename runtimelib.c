@@ -276,6 +276,7 @@ void ncptl_page_fault_count (uint64_t *major, uint64_t *minor)
 
 /* Return the total number of interrupts received by the node since
  * boot time or -1 if unknown. */
+#pragma sst return -1
 uint64_t ncptl_interrupt_count (void)
 {
   uint64_t numints = (uint64_t)(~0);  /* Total number of interrupts seen on all CPUs */
@@ -841,6 +842,7 @@ static void calculate_mean_sleep_delay (void)
 
 /* Calculate the quality of the user/system time read from
  * ncptl_process_time(). */
+#pragma sst empty
 static void calculate_process_time_quality (void)
 {
 #ifdef HAVE_GETRUSAGE
